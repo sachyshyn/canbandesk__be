@@ -13,4 +13,7 @@ export class User {
 
   @Field()
   userId: string;
+
+  @Field()
+  password?: string;
 }

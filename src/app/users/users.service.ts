@@ -6,8 +6,12 @@ import { User } from './models';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async getUser(userId: User['userId']): Promise<User> {
-    return this.usersRepository.getUser(userId);
+  async getUserById(userId: User['userId']): Promise<User> {
+    return this.usersRepository.getUserById(userId);
+  }
+
+  async getUserByEmail(email: User['email']): Promise<User> {
+    return this.usersRepository.getUserByEmail(email);
   }
 
   async getUsers(): Promise<User[]> {

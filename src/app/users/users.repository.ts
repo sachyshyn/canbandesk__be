@@ -4,16 +4,22 @@ import { resolvePromise } from '@/shared/helpers';
 
 @Injectable()
 export class UsersRepository {
-  private usersMap: Map<User['userId'], User> = new Map();
+  private usersMap: Map<User['userId'], User> = new Map([
+    ['1', { email: 'alex@gmail.com', firstName: 'Alex', lastName: 'Sachyshyn', password: '123456', userId: '1' }]
+  ]);
 
   private get userList() {
     return [...this.usersMap.values()];
   }
 
-  async getUser(userId: User['userId']): Promise<User> {
+  async getUserById(userId: User['userId']): Promise<User | undefined> {
     const user = this.usersMap.get(userId);
 
     return resolvePromise<User>(user);
+  }
+
+  async getUserByEmail(email: User['email']): Promise<User | undefined> {
+    return this.userList.find((u) => u.email === email);
   }
 
   async getUsers(): Promise<User[]> {

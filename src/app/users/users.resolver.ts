@@ -3,14 +3,17 @@ import { User } from './models';
 import { UsersService } from './users.service';
 import { GetUserArgs } from './dto/args';
 import { CreateUserInput, DeleteUserInput, UpdateUserInput } from './dto/input';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Query(() => User, { name: 'user', nullable: true })
+  @UseGuards(GqlAuthGuard)
   async getUser(@Args() getUserArgs: GetUserArgs): Promise<User> {
-    return this.usersService.getUser(getUserArgs.userId);
+    return this.usersService.getUserById(getUserArgs.userId);
   }
 
   @Query(() => [User], { name: 'users', nullable: 'items' })
