@@ -1,3 +1,4 @@
+import { ROLES } from '@/shared/constants';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
@@ -13,6 +14,9 @@ export class User {
 
   @Field()
   id: string;
+
+  @Field(() => [String])
+  roles: ROLES[];
 }
 
 @ObjectType()
