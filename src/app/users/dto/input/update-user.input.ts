@@ -18,5 +18,5 @@ export class UpdateUserInput {
 
   @Field()
   @IsNotEmpty()
-  userId: string;
+  id: string;
 }
