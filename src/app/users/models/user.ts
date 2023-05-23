@@ -12,8 +12,11 @@ export class User {
   email: string;
 
   @Field()
-  userId: string;
+  id: string;
+}
 
+@ObjectType()
+export class UserWithPassword extends User {
   @Field()
-  password?: string;
+  password: string;
 }

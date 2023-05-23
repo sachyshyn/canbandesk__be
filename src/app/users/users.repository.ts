@@ -1,53 +1,71 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './models';
 import { resolvePromise } from '@/shared/helpers';
+import { UserWithPassword } from './models';
 
 @Injectable()
 export class UsersRepository {
-  private usersMap: Map<User['userId'], User> = new Map([
-    ['1', { email: 'alex@gmail.com', firstName: 'Alex', lastName: 'Sachyshyn', password: '123456', userId: '1' }]
-  ]);
+  private usersMap: Map<UserWithPassword['id'], UserWithPassword> = new Map();
 
   private get userList() {
     return [...this.usersMap.values()];
   }
 
-  async getUserById(userId: User['userId']): Promise<User | undefined> {
-    const user = this.usersMap.get(userId);
+  async getUserById(id: User['id']): Promise<User | undefined> {
+    const user = this.usersMap.get(id);
 
-    return resolvePromise<User>(user);
+    const userCopy = { ...user };
+
+    delete userCopy.password;
+
+    return resolvePromise<User>(userCopy);
   }
 
-  async getUserByEmail(email: User['email']): Promise<User | undefined> {
+  async getUserWithPasswordByEmail(email: User['email']): Promise<UserWithPassword | undefined> {
     return this.userList.find((u) => u.email === email);
   }
 
   async getUsers(): Promise<User[]> {
-    return resolvePromise<User[]>(this.userList);
+    return resolvePromise<User[]>(
+      this.userList.map((u) => {
+        const uCopy = { ...u };
+
+        delete uCopy.password;
+
+        return uCopy;
+      })
+    );
   }
 
-  async createUser(userData: Omit<User, 'userId'>): Promise<User> {
-    const user: User = { ...userData, userId: Date.now().toString() };
+  async createUser(userData: Omit<UserWithPassword, 'id'>): Promise<User> {
+    const user: UserWithPassword = { ...userData, id: Date.now().toString() };
 
-    this.usersMap.set(user.userId, user);
+    this.usersMap.set(user.id, user);
 
-    return resolvePromise(user);
+    const userCopy = { ...user };
+    delete userCopy.password;
+
+    return resolvePromise(userCopy);
   }
 
-  async updateUser(userData: Pick<User, 'userId'> & Partial<User>): Promise<User> {
-    const currentUserData = this.usersMap.get(userData.userId);
+  async updateUser(userData: Pick<User, 'id'> & Partial<User>): Promise<User> {
+    const currentUserData = this.usersMap.get(userData.id);
 
-    const updatedUser = { ...currentUserData, userData };
+    const updatedUser = { ...currentUserData, ...userData };
 
-    this.usersMap.set(userData.userId, updatedUser);
+    const userCopy = { ...updatedUser };
 
-    return resolvePromise<User>(updatedUser);
+    delete userCopy.password;
+
+    this.usersMap.set(userData.id, updatedUser);
+
+    return resolvePromise<User>(userCopy);
   }
 
-  async deleteUser(userId: User['userId']): Promise<User> {
-    const user = this.usersMap.get(userId);
+  async deleteUser(id: User['id']): Promise<User> {
+    const user = this.usersMap.get(id);
 
-    this.usersMap.delete(userId);
+    this.usersMap.delete(id);
 
     return resolvePromise(user);
   }
