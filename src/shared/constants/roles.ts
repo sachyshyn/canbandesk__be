@@ -1,0 +1,6 @@
+export enum ROLES {
+  DEV = 'DEVELOPER',
+  UX_UI = 'DESIGNER',
+  BA = 'BUSINESS_ANALYST',
+  QA = 'QUALITY_ASSURANCE'
+}

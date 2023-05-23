@@ -1,5 +1,6 @@
+import { ROLES } from '@/shared/constants';
 import { InputType, ObjectType, Field } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { ArrayMinSize, IsArray, IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 @InputType()
 @ObjectType()
@@ -19,4 +20,9 @@ export class UpdateUserInput {
   @Field()
   @IsNotEmpty()
   id: string;
+
+  @Field(() => [String], { nullable: true })
+  @IsEnum(ROLES, { each: true })
+  @ArrayMinSize(1)
+  roles?: ROLES[];
 }
